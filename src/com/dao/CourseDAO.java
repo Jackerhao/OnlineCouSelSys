@@ -6,6 +6,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Properties;
 import java.util.regex.Pattern;
 
 import com.domain.Course;
@@ -18,6 +19,9 @@ public class CourseDAO {
 	private static String url = "jdbc:mysql://localhost/users?useSSL=FALSE&serverTimezone=UTC";
 	private static String dbuser = "root";
 	private static String dbpassword = "switch";
+	
+	
+  Properties p= new Properties();
 	
 	//数据库连接
      public static void initConnection(){
