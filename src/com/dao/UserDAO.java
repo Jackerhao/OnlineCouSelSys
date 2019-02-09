@@ -17,7 +17,9 @@ public class UserDAO {
 	private static String dbuser = "root";
 	private static String dbpassword = "switch";
 	
-
+//пч╦дак
+	
+	
      public static void initConnection(){
     	 
          try {
