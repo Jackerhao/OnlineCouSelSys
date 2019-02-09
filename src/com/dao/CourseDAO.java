@@ -1,5 +1,7 @@
 package com.dao;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -15,16 +17,33 @@ public class CourseDAO {
 	private static PreparedStatement ps=null;
 	private static ResultSet rs=null;
 	private static Connection ct=null;
-	private static String driver ="com.mysql.cj.jdbc.Driver";
-	private static String url = "jdbc:mysql://localhost/users?useSSL=FALSE&serverTimezone=UTC";
-	private static String dbuser = "root";
-	private static String dbpassword = "switch";
-	
-	
-  Properties p= new Properties();
+//	private static String driver ="com.mysql.cj.jdbc.Driver";
+//	private static String url = "jdbc:mysql://localhost/users?useSSL=FALSE&serverTimezone=UTC";
+//	private static String dbuser = "root";
+//	private static String dbpassword = "switch";
+
+	private static String driver= null;
+	private static String jdbcUrl = null;
+	private static String dbuser = null;
+	private static String dbpassword = null;
 	
 	//数据库连接
      public static void initConnection(){
+    	 
+    	 InputStream in = 
+ 				Course.class.getClassLoader().getResourceAsStream("jdbc.properties");
+ 		Properties properties = new Properties();
+ 		try {
+			properties.load(in);
+		} catch (IOException e1) {
+		System.out.println("读取文件失败");
+			e1.printStackTrace();
+		}
+ 		
+ 		driver =properties.getProperty("driver");
+ 		jdbcUrl = properties.getProperty("jdbcUrl");
+ 		dbuser= properties.getProperty("user");
+ 		dbpassword = properties.getProperty("password");
     	 
          try {
         	 Class.forName(driver);
@@ -36,7 +55,7 @@ public class CourseDAO {
           }
 
           try {
-        	   ct= DriverManager.getConnection(url,dbuser,dbpassword);
+        	   ct= DriverManager.getConnection(jdbcUrl ,dbuser,dbpassword);
                 System.out.println("Success connect Mysql server!");
 
            }
