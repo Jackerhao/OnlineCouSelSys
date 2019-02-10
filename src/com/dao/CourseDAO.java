@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Properties;
 import java.util.regex.Pattern;
 
+import com.db.JDBCTools;
 import com.domain.Course;
 
 public class CourseDAO {
@@ -22,6 +23,8 @@ public class CourseDAO {
 //	private static String dbuser = "root";
 //	private static String dbpassword = "switch";
 
+	/*
+	 * 版本一
 	private static String driver= null;
 	private static String jdbcUrl = null;
 	private static String dbuser = null;
@@ -80,14 +83,15 @@ public class CourseDAO {
          }
 
          catch(Exception e) {e.printStackTrace();}
-     }
+     }*/
  
      //查询老师开设的课程
      public static ArrayList queryAllTeaSelCourse(String username) {
     	 ArrayList CourseSelList=new ArrayList();
     	 //String sql="select * from course where teacher='"+teacher+"'";
     	 String sql = "select * from Course where course_id=some(select course_id from elective where username ='"+username+"')";
-    	 initConnection();
+    	// initConnection();
+    	 ct = JDBCTools.getConnection();
     	 try {
     		  rs = ct.createStatement().executeQuery(sql);
     		  
@@ -109,7 +113,8 @@ public class CourseDAO {
     	 }catch (Exception e) {
 			e.printStackTrace();
 		}finally {
-			closeConnection();
+			//closeConnection();
+			JDBCTools.releaseSource(rs, ps, ct);
 		}
     	 
     	 return CourseSelList;
@@ -119,8 +124,8 @@ public class CourseDAO {
      public static boolean AddCourse(Course course) {
     	 boolean flag=true;
     	 String sql="insert into course values(?,?,?,?,?,?,?,?)";
-    	 initConnection();
-    	 
+    	// initConnection();
+    	 ct = JDBCTools.getConnection();
     	 try {
 			ps=ct.prepareStatement(sql);
 			
@@ -141,7 +146,8 @@ public class CourseDAO {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}finally {
-			closeConnection();
+			//closeConnection();
+			JDBCTools.releaseSource(rs, ps, ct);
 		}
     	 return flag;
      }
@@ -151,7 +157,8 @@ public class CourseDAO {
      public static ArrayList queryAllStuSelCourse() {
     	 ArrayList CourseSelList=new ArrayList();
     	 String sql="select * from course";
-    	 initConnection();
+    	// initConnection();
+    	 ct = JDBCTools.getConnection();
     	 try {
     		  rs = ct.createStatement().executeQuery(sql);
     		  
@@ -173,7 +180,8 @@ public class CourseDAO {
     	 }catch (Exception e) {
 			e.printStackTrace();
 		}finally {
-			closeConnection();
+			//closeConnection();
+			JDBCTools.releaseSource(rs, ps, ct);
 		}
     	 
     	 return CourseSelList;
@@ -184,8 +192,8 @@ public class CourseDAO {
      public static boolean AddSelCourse(String username,String course_id) {
     	 boolean flag=true;
     	 String sql="insert into elective values(?,?)";
-    	 initConnection();
-    	 
+    	// initConnection();
+    	 ct = JDBCTools.getConnection();
     	 try {
 			ps=ct.prepareStatement(sql);
 			ps.setString(1,username);
@@ -199,7 +207,8 @@ public class CourseDAO {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}finally {
-			closeConnection();
+			//closeConnection();
+			JDBCTools.releaseSource(rs, ps, ct);
 		}
     	 return flag;
      }
@@ -208,7 +217,8 @@ public class CourseDAO {
      public static int isStuSelCourse(String username,String course_id) {
     	 int isSel=0;
     	 String sql =" select count(*) from elective where username ='"+username + "' and course_id ='"+course_id+"'";
-    	 initConnection();
+    	 //initConnection();
+    	 ct = JDBCTools.getConnection();
     	 
     	 try {
 			rs = ct.createStatement().executeQuery(sql);
@@ -224,7 +234,8 @@ public class CourseDAO {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}finally {
-			closeConnection();
+			//closeConnection();
+			JDBCTools.releaseSource(rs, ps, ct);
 		}
     	 return isSel;
      }
@@ -233,7 +244,9 @@ public class CourseDAO {
      public static int isTeaAddCourse(String course_id) {
     	 int isAdd=0;
     	 String sql ="select count(*) from course where course_id='"+course_id+"'";
-    	 initConnection();
+    	 //initConnection();
+    	 
+    	 ct = JDBCTools.getConnection();
     	 
     	 try {
 			rs = ct.createStatement().executeQuery(sql);
@@ -251,7 +264,8 @@ public class CourseDAO {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}finally {
-			closeConnection();
+			//closeConnection();
+			JDBCTools.releaseSource(rs, ps, ct);
 		}
     	 return isAdd;
      }
@@ -280,7 +294,9 @@ public class CourseDAO {
    	     String sql = "select * from Course where course_id="
     	 		+ "some(select course_id from elective where username ='"+username+"')";
     	// String sql = "select * from Course";
-    	 initConnection();
+    	 //initConnection();
+   	     ct = JDBCTools.getConnection();
+		
     	 try {
     		  rs = ct.createStatement().executeQuery(sql);
     		  
@@ -302,7 +318,8 @@ public class CourseDAO {
     	 }catch (Exception e) {
 			e.printStackTrace();
 		}finally {
-			closeConnection();
+			//closeConnection();
+			JDBCTools.releaseSource(rs, ps, ct);
 		}
     	 
     	 return CourseSelList;
@@ -315,7 +332,9 @@ public class CourseDAO {
     	 		"on e.username=u.username  where role='"+role+"'and course_id='"+course_id+"'";
   //select count(course_id) selecteds from elective e join user u 
   //on e.username=u.username  where role='0'and course_id='00002'; 
-    	 initConnection();
+    	 //initConnection();
+    	 ct = JDBCTools.getConnection();
+			
     	 try {
     		  rs = ct.createStatement().executeQuery(sql);
     		   if(rs.next()) {
@@ -326,7 +345,9 @@ public class CourseDAO {
     	 }catch (Exception e) {
 			e.printStackTrace();
 		}finally {
-			closeConnection();
+			//closeConnection();
+			
+			JDBCTools.releaseSource(rs, ps, ct);
 		}
     	 
     	 return selecteds;
@@ -340,7 +361,9 @@ public class CourseDAO {
      public static boolean delSelCourse(String username,String course_id) {
     	 boolean flag= true;
     	 String sql="delete from elective where username = ? and course_id= ?";
-    	 initConnection();
+    	// initConnection();
+    	 ct = JDBCTools.getConnection();
+			
     	 
     	 try {
 			ps=ct.prepareStatement(sql);
@@ -355,7 +378,9 @@ public class CourseDAO {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}finally {
-			closeConnection();
+			//closeConnection();
+			
+			JDBCTools.releaseSource(rs, ps, ct);
 		}
     	 return flag;
      }
@@ -364,7 +389,9 @@ public class CourseDAO {
      public static boolean delCourse(String course_id) {
     	 boolean flag= true;
     	 String sql="delete from course where course_id= ?";
-    	 initConnection();
+    	//initConnection();
+    	 ct = JDBCTools.getConnection();
+		
     	 
     	 try {
 			ps=ct.prepareStatement(sql);
@@ -379,7 +406,9 @@ public class CourseDAO {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}finally {
-			closeConnection();
+			//closeConnection();
+			ct = JDBCTools.getConnection();
+			JDBCTools.releaseSource(rs, ps, ct);
 		}
     	 return flag;
      }
